@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import CreateDoctorAccountImg from "../assets/Signin.jpg"; // Import the background image
+import { registerDoctor } from "../Services/appointmentService";
 
 const DoctorCreateAccountPage = () => {
   const [name, setName] = useState("");
@@ -14,17 +15,9 @@ const DoctorCreateAccountPage = () => {
     e.preventDefault();
     try {
       // Send POST request to create a new doctor account
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/register-doctor",
-        {
-          name,
-          email,
-          password,
-          speciality,
-        }
-      );
+      const response = await registerDoctor(name, email, password, speciality);
 
-      console.log(response.data);
+      console.log(response);
       alert("Doctor account created successfully!");
 
       // Redirect to the doctor's dashboard or sign-in page after account creation

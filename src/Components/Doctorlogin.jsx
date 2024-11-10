@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import SigninBackground from "../assets/Signin.jpg"; // Update with your background image
+import { loginUser } from "../Services/appointmentService";
 
 const DoctorLoginPage = () => {
   const [email, setEmail] = useState("");
@@ -13,14 +14,7 @@ const DoctorLoginPage = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        // Update this API endpoint as necessary
-        { email, password }
-      );
-
-      localStorage.setItem("token", response.data.token);
-
+      const response = await loginUser(email, password);
       // Assuming the server returns a success message
       setMessage("Login successful! Redirecting...");
       setTimeout(() => {

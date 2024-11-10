@@ -1,29 +1,51 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Signin from "../assets/Signin.jpg"; // Adjust the import path as necessary
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import {
+  createAppointment,
+  fetchDoctors,
+} from "../Services/appointmentService";
 
 const AppointmentPage = () => {
-  const [doctor, setDoctor] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [reason, setReason] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  // This is where the function is defined
+  const [doctors, setDoctors] = useState([]);
+  const [selectedDoctor, setSelectedDoctor] = useState("");
+
+  useEffect(() => {
+    const getDoctors = async () => {
+      try {
+        const doctorList = await fetchDoctors();
+        setDoctors(doctorList);
+      } catch (error) {
+        console.error("Failed to load doctors:", error);
+      }
+    };
+
+    getDoctors();
+  }, []);
+
+  const handleSelect = (e) => {
+    const doctorId = e.target.value;
+    setSelectedDoctor(doctorId);
+    // if (onSelectDoctor) onSelectDoctor(doctorId);
+  };
+
   const handleAppointmentSubmit = async (e) => {
     e.preventDefault(); // Prevent the default form submission
 
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/appointments/create",
-        {
-          doctor,
-          date,
-          time,
-          reason,
-        }
+      console.log(selectedDoctor);
+      const response = await createAppointment(
+        selectedDoctor,
+        date,
+        time,
+        reason
       );
 
       // Assuming the server returns a success message
@@ -61,14 +83,26 @@ const AppointmentPage = () => {
         <form onSubmit={handleAppointmentSubmit}>
           <div className="mb-6">
             <label className="block text-white mb-2">Choose Doctor</label>
-            <input
+            {/* <input
               type="text"
               value={doctor}
               onChange={(e) => setDoctor(e.target.value)}
               className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:outline-none focus:border-blue-500"
               placeholder="Doctor's name"
               required
-            />
+            /> */}
+            <select
+              className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:outline-none focus:border-blue-500"
+              value={selectedDoctor}
+              onChange={handleSelect}
+            >
+              <option value="">Select a Doctor</option>
+              {doctors.map((doctor) => (
+                <option key={doctor._id} value={doctor._id}>
+                  {doctor.name} - {doctor.speciality}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="mb-6">
             <label className="block text-white mb-2">Appointment Date</label>

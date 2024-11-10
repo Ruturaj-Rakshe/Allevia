@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { loginUser } from "../Services/appointmentService";
 
 const SignInPage = ({ onSignIn }) => {
   const [email, setEmail] = useState("");
@@ -11,20 +12,14 @@ const SignInPage = ({ onSignIn }) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        {
-          email,
-          password,
-        }
-      );
+      const data = await loginUser(email, password);
 
-      // Assuming response.data contains user info and role
-      const accountExists = response.data && response.data.user; // Check if user exists
+      // Assuming data contains user info and role
+      const accountExists = data && data.user; // Check if user exists
       if (accountExists) {
         // Call the onSignIn function only if account exists
-        localStorage.setItem("token", response.data.token);
-        onSignIn(response.data.role, true); // Pass true for accountExists
+        localStorage.setItem("token", data.token);
+        onSignIn(data.role, true); // Pass true for accountExists
       } else {
         alert("Account does not exist. Please sign up.");
       }

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import Signin from "../assets/Signin.jpg";
 import axios from "axios";
+import { registerUser } from "../Services/appointmentService";
+import { useNavigate } from "react-router-dom";
 
 const NewAccountPage = () => {
   const [name, setName] = useState("");
@@ -8,24 +10,16 @@ const NewAccountPage = () => {
   const [dob, setDob] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("patient"); // New state for role
+  const navigate = useNavigate();
 
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/register",
-        {
-          name,
-          dob,
-          email,
-          password,
-          role, // Send the selected role to the backend
-        }
-      );
-
-      console.log(response.data);
+      const data = await registerUser(name, dob, email, password, role);
+      console.log(data);
       alert("Account created successfully!");
+      navigate("/SignIn");
     } catch (error) {
       console.error(error.response ? error.response.data : error.message);
       alert("Error creating account.");
@@ -33,21 +27,9 @@ const NewAccountPage = () => {
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-center h-screen bg-gray-900 overflow-hidden">
-      {/* Blurred background image */}
-      <div
-        className="absolute inset-0 z-0 w-full h-full"
-        style={{
-          backgroundImage: `url(${Signin})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          filter: "blur(8px)",
-        }}
-      />
-
+    <div className="relative flex flex-col items-center justify-center bg-gray-900 overflow-hidden">
       {/* Sign-Up Form */}
-      <div className="relative z-10 bg-gray-800 bg-opacity-90 p-8 rounded-lg shadow-lg w-full max-w-md">
+      <div className="relative z-10 bg-gray-800 bg-opacity-90 p-8 rounded-lg shadow-lg w-full max-w-lg my-8">
         <h1 className="text-3xl font-semibold mb-8 text-white">
           Create New Account
         </h1>

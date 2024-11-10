@@ -46,11 +46,6 @@ const Header = ({ isAuthenticated, setIsAuthenticated }) => {
     };
   }, []);
 
-  // Hide the header on sign-in and sign-up pages
-  if (location.pathname === "/Signin" || location.pathname === "/signup") {
-    return null;
-  }
-
   const Logout = () => {
     localStorage.removeItem("token");
     setIsAuthenticated(false);

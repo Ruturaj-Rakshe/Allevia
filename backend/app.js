@@ -8,6 +8,7 @@ const cors = require("cors");
 
 const authRoutes = require("./routes/auth");
 const appointmentRoutes = require("./routes/appointment");
+const doctorRoutes = require("./routes/doctors");
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/appointment", appointmentRoutes);
+app.use("/api/doctors", doctorRoutes);
 
 mongoose
   .connect(process.env.CONNECTION_STRING, {
